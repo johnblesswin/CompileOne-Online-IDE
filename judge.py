@@ -22,7 +22,7 @@ sign = {
 langDict = {
 "C" : {"extension":"c", "system":"find /usr/bin/ -name gcc","compile":"gcc [path]/[codefilename].c -O2 -fomit-frame-pointer -o [path]/[codefilename]","execute":"[path]/[exename]"},
 "C++": {"extension": "cpp", "system": "find /usr/bin/ -name g++","compile": "g++ [path]/[codefilename].cpp -O2 -fomit-frame-pointer -o [path]/[codefilename]", "execute":"[path]/[exename]"},
-"C#" : {"extension": "cs", "system":"find /usr/bin/ -name gmcs","compile":"gmcs [path]/[codefilename].cs", "execute":"mono [path]/[exename].exe"},
+"C#" : {"extension": "cs", "system":"find /usr/bin/ -name mcs","compile":"mcs [path]/[codefilename].cs", "execute":"mono [path]/[exename].exe"},
 "Java" : {"extension" : "java", "system":"find /usr/bin/ -name javac","compile":"javac -g:none -Xlint -d [path] [path]/[codefilename].java", "execute":"java -classpath [path] [exename]"},
 "Pascal": {"extension":"pas", "system":"find /usr/bin/ -name fpc","compile":"fpc [path]/[codefilename].pas","execute":"[path]/[exename]"},
 "Haskell":{"extension":"hs","system":"find /usr/bin/ -name ghc","compile":"ghc [path]/[codefilename].hs -o [path]/[codefilename]","execute":"[path]/[exename]"},

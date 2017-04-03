@@ -305,10 +305,10 @@ class fs
 		fclose($fout);
 		fclose($ferr);
 
-		$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+		$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);
 		if(! $conn )
 		{
-		  die('Could not connect: ' . mysql_error());
+		  die('Could not connect: ' . mysqli_error($conn));
 		}
 		
 		$path = $chroot_env . DIRECTORY_SEPARATOR . $codefilename;
@@ -316,12 +316,12 @@ class fs
 		       "(codefilename,username,langdB,ext,path,timelimit,access) " .
 		       "VALUES ('".$codefilename."','".$username."','".$lang."','".$ext."','".$path."','".$timelimit."','".$access."')";
 		
-		mysql_select_db($mysql_dbname);
-		$retval = mysql_query( $sql, $conn);
+		mysqli_select_db($conn,$mysql_dbname);
+		$retval = mysqli_query( $conn,$sql);
 		
 		if(! $retval )
 		{
-		  die('Could not enter data: ' . mysql_error());
+		  die('Could not enter data: ' . mysqli_error($conn));
 		}
 		//echo "Entered data successfully\n";
 			
@@ -339,14 +339,14 @@ class fs
 		while(1)
 		{
 			sleep(1);
-			$check = mysql_query( $sql, $conn);
-			$row = mysql_fetch_array($check, MYSQL_ASSOC);
+			$check = mysqli_query( $conn,$sql);
+			$row = mysqli_fetch_array($check, MYSQLI_ASSOC);
 			
 			if($row['num'] != 0)
 			{	
-				$result = mysql_query( $sql_fetch, $conn);
-				$ret = mysql_fetch_array($result, MYSQL_ASSOC);
-				mysql_close($conn);
+				$result = mysqli_query( $conn,$sql_fetch);
+				$ret = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				mysqli_close($conn);
 	
 
 				//hiding stderr.txt path shown
@@ -378,7 +378,7 @@ class fs
 			}	
 		}
 
-		mysql_close($conn);	
+		mysqli_close($conn);	
 
 	}
 
@@ -891,19 +891,12 @@ min-width:600px;
                		           <span data-bind="label">Language</span>&nbsp;<span class="caret"></span>
 		         </button>
 		         <ul id="language" class="dropdown-menu">
-				<li><a href="#">AWK</a></li>
-				<li><a href="#">Bash</a></li>
-				<li><a href="#">Brain</a></li>
 				<li><a href="#">C</a></li>
 				<li><a href="#">C++</a></li>
 				<li><a href="#">C#</a></li>
 				<li><a href="#">Java</a></li>
-				<li><a href="#">Haskell</a></li>
 				<li><a href="#">JavaScript</a></li>
-				<li><a href="#">Pascal</a></li>
-				<li><a href="#">Perl</a></li>
 				<li><a href="#">PHP</a></li>
-				<li><a href="#">Pike</a></li>
 				<li><a href="#">Python2.7</a></li>
 				<li><a href="#">Python3</a></li>
 				<li><a href="#">Ruby</a></li>
@@ -1348,6 +1341,7 @@ $.valHooks.textarea = {
 				else
 				{ 
 					var tl = $("#timelimit").closest( '.btn-group' ).find( '[data-bind="label"]' ).text();
+					tl = tl.substring(0, tl.length - 1);
 					var lang =  $("#language").closest( '.btn-group' ).find( '[data-bind="label"]' ).text();
 					var input = $('#stdin').val();
 					if(lang != "Language")
@@ -1665,7 +1659,7 @@ $('#stderr').css("color","#B22400");
 										//$('#data .editor-container').show();
 										setTimeout(function () { 
 												
-												editor.getSession().setValue(d.content);				
+												editor.getSession().setValue(d.content);		
 										},0);
 										setTimeout(function () { 
 												
@@ -1684,7 +1678,7 @@ $('#stderr').css("color","#B22400");
 									default:
 										setTimeout(function () { 
 												
-												editor.getSession().setValue(d.content);				
+												editor.getSession().setValue(d.content);		
 										},0);
 										setTimeout(function () { 
 												
@@ -1746,4 +1740,3 @@ $('#stderr').css("color","#B22400");
 	<?php include 'footer.php';?>
 	</body>
 </html>
-

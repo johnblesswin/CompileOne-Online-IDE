@@ -30,7 +30,7 @@ function check()
 
 	$password = stripslashes($password);
 
-	$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+	$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);
 
 
 
@@ -38,11 +38,11 @@ function check()
 
 	{
 
-	  	die('Could not connect: ' . mysql_error());
+	  	die('Could not connect: ' . mysqli_error($conn));
 
 	}
 
-	mysql_select_db($mysql_dbname);
+	mysqli_select_db($conn,$mysql_dbname);
 
 
 
@@ -52,13 +52,13 @@ function check()
 
 	$sql="SELECT * FROM users WHERE username='$username'";
 
-	$result=mysql_query($sql,$conn);
+	$result=mysqli_query($conn,$sql);
 
 
 
 	// Mysql_num_row is counting table row
 
-	$count=mysql_num_rows($result);
+	$count=mysqli_num_rows($result);
 
 
 	// If result matched $username table row must be 1 row
@@ -69,7 +69,7 @@ function check()
 
 	{
 
-		$ret = mysql_fetch_array($result, MYSQL_ASSOC);
+		$ret = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
 
@@ -87,7 +87,7 @@ function check()
 
 			{
 
-				mysql_close($conn);
+				mysqli_close($conn);
 
 				echo "Account not verified.Please check your email for verification link";
 
@@ -123,7 +123,7 @@ function check()
 
 				$upd_qry = "UPDATE users SET ctime=$stamp,ckey='$ckey' WHERE username='$username'";
 
-				mysql_query($upd_qry,$conn);
+				mysqli_query($conn,$upd_qry);
 
 		
 
@@ -139,7 +139,7 @@ function check()
 
 				}					
 
-				mysql_close($conn);
+				mysqli_close($conn);
 
 				echo "true";
 
@@ -157,7 +157,7 @@ function check()
 
 		{
 
-			mysql_close($conn);
+			mysqli_close($conn);
 
 			echo "Wrong Password";
 
@@ -171,7 +171,7 @@ function check()
 
 	{
 
-		mysql_close($conn);
+		mysqli_close($conn);
 
 		echo "Wrong Username";
 

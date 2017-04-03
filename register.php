@@ -6,9 +6,10 @@ class aqf
 	{
 		global $mysql_hostname,$mysql_username,$mysql_password,$mysql_dbname;
 		$string = "abcdefghijklmnopqrstuvwxyz0123456789";
+		$str = "";
 		for($i=0;$i<25;$i++)
 		{
-			$pos = rand(0,36);
+			$pos = rand(0,35);
 			$str .= $string{$pos};
 		}
 	
@@ -62,7 +63,7 @@ class aqf
 		$username = htmlentities($username);
 		$password = htmlentities($password);
 		$authcode = htmlentities($authcode);
-		$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+		$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);
 	
 
 
@@ -70,22 +71,21 @@ class aqf
 
 		if(! $conn )
 		{
-		  	die('Could not connect: ' . mysql_error());
+		  	die('Could not connect: ' . mysqli_error($conn));
 		}
-		mysql_select_db($mysql_dbname);
+		mysqli_select_db($conn,$mysql_dbname);
 	
 
 		if(strlen($username) > 1)
 
 			// stores sha1 of password
 			$sha1pass = PwdHash($password);
-			$query = "INSERT INTO users(username,firstname,lastname,email,password,authcode,flag) VALUES('$username','$firstname', '$lastname', '$email', '$sha1pass', '$authcode', '$flag')";
+			$query = "INSERT INTO users(username,firstname,lastname,email,password,authcode,flag,ckey,ctime) VALUES('$username','$firstname', '$lastname', '$email', '$sha1pass', '$authcode', '$flag','',0)";
 			
-
-		if(!mysql_query($query,$conn))
+		if(!mysqli_query($conn,$query))
 		{
 			//return mysql_errno();
-			if(mysql_errno() == 1062)
+			if(mysqli_errno($conn) == 1062)
 			{
 				return "Username or Email already registered";
 
@@ -108,8 +108,6 @@ class aqf
 			$src = $path."templates";
 			$command = 'cp -a ' . $src . ' ' .$dst;
 			$shell_result_output = shell_exec(escapeshellcmd($command));
-
-
 
 
 			/***************************Verification Mail **************************/
@@ -149,7 +147,7 @@ class aqf
 
 		}
 
-		mysql_close($conn);
+		mysqli_close($conn);
 		
 
 	}

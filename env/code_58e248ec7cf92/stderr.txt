@@ -1,0 +1,6 @@
+main.java:9: error: cannot find symbol
+		System.println("hello");
+		      ^
+  symbol:   method println(String)
+  location: class System
+1 error

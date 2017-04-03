@@ -42,18 +42,18 @@ function page_protect()
 		if(isset($_COOKIE['username']) && isset($_COOKIE['userkey']))
 		{
 			/* we double check cookie expiry time against stored in database */
-			$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+			$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);
 
 			if(! $conn )
 			{
-			  	die('Could not connect: ' . mysql_error());
+			  	die('Could not connect: ' . mysqli_error($conn));
 			}
-			mysql_select_db($mysql_dbname);
+			mysqli_select_db($conn,$mysql_dbname);
 			$qry = "SELECT ckey,ctime FROM users where username='$cookie_username'";
-			$cookie_username  = filter($_COOKIE['username']);
-			$rs_ctime = mysql_query($qry,$conn);
-			list($ckey,$ctime) = mysql_fetch_row($rs_ctime);
-			mysql_close($conn);
+			$cookie_username  = filter($conn,$_COOKIE['username']);
+			$rs_ctime = mysqli_query($conn,$qry);
+			list($ckey,$ctime) = mysqli_fetch_row($rs_ctime);
+			mysqli_close($conn);
 
 			// coookie expiry
 			if( (time() - $ctime) > 60*60*24*COOKIE_TIME_OUT) 
@@ -86,13 +86,13 @@ function page_protect()
 
 
 
-function filter($data) {
+function filter($conn,$data) {
 	$data = trim(htmlentities(strip_tags($data)));
 	
 	if (get_magic_quotes_gpc())
 		$data = stripslashes($data);
 	
-	$data = mysql_real_escape_string($data);
+	$data = mysqli_real_escape_string($conn,$data);
 	
 	return $data;
 }
@@ -217,23 +217,21 @@ function logout()
 {
 	global $mysql_hostname,$mysql_username,$mysql_password,$mysql_dbname;
 	session_start();
+	$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);	
+	if(! $conn )
+                {
+                        die('Could not connect: ' . mysqli_error($conn));
+                }	
 
-	$sess_username = strip_tags(mysql_real_escape_string($_SESSION['username']));
-	$cook_username = strip_tags(mysql_real_escape_string($_COOKIE['username']));
+	$sess_username = strip_tags(mysqli_real_escape_string($conn,$_SESSION['username']));
+	$cook_username = strip_tags(mysqli_real_escape_string($conn,$_COOKIE['username']));
 
 	if(isset($sess_user_id) || isset($cook_user_id)) 
 	{
-		$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
-
-		if(! $conn )
-		{
-		  	die('Could not connect: ' . mysql_error());
-		}
-		mysql_select_db($mysql_dbname);
-		mysql_query("UPDATE users SET ckey='', ctime='' where username='$sess_username' OR  username = '$cook_username'",$conn);
-		mysql_close($conn);
+		mysqli_select_db($conn,$mysql_dbname);
+		mysqli_query($conn,"UPDATE users SET ckey='', ctime='' where username='$sess_username' OR  username = '$cook_username'",$conn);
 	}		
-
+	mysqli_close($conn);
 	/************ Delete the sessions****************/
 	unset($_SESSION['username']);
 	unset($_SESSION['HTTP_USER_AGENT']);
@@ -261,4 +259,3 @@ function PwdHash($pwd, $salt = null)
     return $salt . sha1($pwd . $salt);
 }
 
-?>

@@ -27,7 +27,8 @@ ini_set('open_basedir', dirname(__FILE__) . DIRECTORY_SEPARATOR);//Limit the fil
 			"pike" => "pike.pike",
 			"txt" => "plaintext.txt",
 			"py" => "python.py",
-			"rb" => "ruby.rb"
+			"rb" => "ruby.rb",
+			"m" => "objectivec.m"
 		);
 
 class fs
@@ -141,6 +142,7 @@ class fs
 				case 'js':
 				case 'json':
 				case 'css':
+				case 'm':
 				case 'html':
 					//file_get_contents — Reads entire file into a string	
 					$dat['content'] = file_get_contents($dir);
@@ -305,10 +307,10 @@ class fs
 		fwrite($fout,"");
 		fwrite($ferr,"");
 
-		$conn = mysql_connect($mysql_hostname, $mysql_username, $mysql_password);
+		$conn = mysqli_connect($mysql_hostname, $mysql_username, $mysql_password);
 		if(! $conn )
 		{
-		  die('Could not connect: ' . mysql_error());
+		  die('Could not connect: ' . mysqli_errori($conn));
 		}
 		
 		$path = $chroot_env . DIRECTORY_SEPARATOR . $codefilename;
@@ -316,12 +318,12 @@ class fs
 		       "(codefilename,username,langdB,ext,path,timelimit,access) " .
 		       "VALUES ('".$codefilename."','".$username."','".$lang."','".$ext."','".$path."','".$timelimit."','".$access."')";
 		
-		mysql_select_db($mysql_dbname);
-		$retval = mysql_query( $sql, $conn);
+		mysqli_select_db($conn,$mysql_dbname);
+		$retval = mysqli_query($conn,$sql);
 		
 		if(! $retval )
 		{
-		  die('Could not enter data: ' . mysql_error());
+		  die('Could not enter data: ' . mysqli_error($conn));
 		}
 		//echo "Entered data successfully\n";
 			
@@ -339,14 +341,14 @@ class fs
 		while(1)
 		{
 			sleep(1);
-			$check = mysql_query( $sql, $conn);
-			$row = mysql_fetch_array($check, MYSQL_ASSOC);
+			$check = mysqli_query($conn,$sql);
+			$row = mysqli_fetch_array($check, MYSQLI_ASSOC);
 			
 			if($row['num'] != 0)
 			{	
-				$result = mysql_query( $sql_fetch, $conn);
-				$ret = mysql_fetch_array($result, MYSQL_ASSOC);
-				mysql_close($conn);
+				$result = mysqli_query($conn,$sql_fetch);
+				$ret = mysqli_fetch_array($result, MYSQLI_ASSOC);
+				mysqli_close($conn);
 
 				//hiding stderr.txt path shown
 				$filepath = $chroot_env . DIRECTORY_SEPARATOR . $codefilename . DIRECTORY_SEPARATOR . "stderr.txt";
@@ -378,7 +380,7 @@ class fs
 				//return json_encode($response);
 			}	
 		}
-		mysql_close($conn);	
+		mysqli_close($conn);	
 
 	}
 
@@ -628,7 +630,14 @@ ms" />
 
 	    <link href="./doc/site/images/favicon.ico" rel="icon" type="image/x-icon">    
 
-
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>CompileOne</title>
+		<link href="assets/css/all.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/compileone.css" rel="stylesheet" type="text/css" />
+		<link href="assets/css/bootstrap-with-responsive-1200-only.css" rel="stylesheet" type="text/css" />
+		<link rel="shortcut icon" type="image/x-icon" href="logo/favicon.ico"/>
 		<style>	
 			.fullScreen .fullScreen-editor{ 
 				height:100%;
@@ -688,23 +697,7 @@ ms" />
    width:400px;
 }
 .aa{color:green;text-decoration:none;}
-	   	</style>
-
-
-
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>CompileOne</title>
-<link href="assets/css/all.css" rel="stylesheet" type="text/css" />
-<link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
-
-
-<link href="assets/css/styles.css" rel="stylesheet" type="text/css" />
-<link href="assets/css/compileone.css" rel="stylesheet" type="text/css" />
-<link href="assets/css/bootstrap-with-responsive-1200-only.css" rel="stylesheet" type="text/css" />
-
-<link rel="shortcut icon" type="image/x-icon" href="logo/favicon.ico"/>
-<style type="text/css">
-         .navbar-inner{
+    .navbar-inner{
 			 background:#F4F4F4;
 				font-size:14px;
 				height:40px;
@@ -952,27 +945,22 @@ if(isset($_POST['operation']) && $_POST['operation']=='codeoj') {
 			
 			<div class="span3" id="language" style="height:auto; margin-right:-10px;" >
 				<h4 style="margin-left:20px; align:center;color:#666">Select Language:</h4>
-			<select id="langSelect" class="form-control" size="16" align="center" style="margin-left:20px;">
-				  <option value='awk'>AWK</option>
-				  <option value='sh'>Bash</option>
-				  <option value='bf'>Brain</option>
+			<select id="langSelect" class="form-control" size="11" align="center" style="margin-left:20px;">
 				  <option value='c'>C</option>
 				  <option value='cpp'>C++</option>
 				  <option value='cs'>C#</option>
-				  <option value='hs'>Haskell</option>
 				  <option value='java'>Java</option>
 				  <option value='js'>JavaScript</option>
-				  <option value='pas'>Pascal</option>
-				  <option value='pl'>Perl</option>
-				  <option value='pike'>Pike</option>
 				  <option value='py'>Python2.7</option>
 				  <option value='py'>Python3</option>
+				  <option value='php'>PHP</option>
 				  <option value='rb'>Ruby</option>
+				  <option value="m">ObjectiveC</option>
 	  
 			</select>
 			<br/>
 			<span style="margin-left:50px;">Timelimit : </span>
-			<input class="form-control" name="tl" type="radio" value="1s" checked />1s     <input class="form-control" name="tl" type="radio" value="5s" />5s
+			<input class="form-control" name="tl" type="radio" value="1" checked />1s     <input class="form-control" name="tl" type="radio" value="5" />5s
 		
 
 				 <div class "span" >

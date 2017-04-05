@@ -4,9 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="Description" content="Sample program for every language available on Compileone - You can compile and run, execute your source code in more than 15 programming languages like Java, C, C++, Pascal,PHP, Perl, Ruby and Python,Haskell,Pike programs online using your browser." />
 <meta name="Keywords" content="Samples,Examples,codes,Unix, Web, Compile, Run, Java, C, C++, PHP, Perl, Ruby,Haskell,Pike and Python Programs" />
-<base href="http://www.compileone.com/" />
 
-<title>Samples</title>
+<title>Samples Code</title>
 <link href="assets/css/bootstrap-with-responsive-1200-only.css" rel="stylesheet" type="text/css" />
 <link href="assets/css/compileone.css" rel="stylesheet" type="text/css" />
 <link href="assets/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
